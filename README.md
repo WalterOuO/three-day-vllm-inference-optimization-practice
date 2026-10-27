@@ -4,7 +4,7 @@
 [![Model](https://img.shields.io/badge/Model-Qwen2.5--3B--Instruct-orange.svg)](https://huggingface.co/Qwen/Qwen2.5-3B-Instruct)
 [![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org/)
 
-本專案針對大語言模型（LLM）在高併發、長上下文與重複前綴（RAG / Agent）等真實業務場景下的推論瓶頸，基於 **vLLM** 推論引擎進行實測與優化。透過**結構壓縮（AWQ Quantization）**、**動態排程管理（Chunked Prefill）**與**記憶體快取重用（Automatic Prefix Caching）**策略，全方位降低 VRAM 顯存佔用、提升系統整體吞吐量（System TPS），並顯著削減首字延遲（TTFT）。
+本專案針對大語言模型（LLM）在高併發、長上下文與重複前綴（RAG / Agent）等真實業務場景下的推論瓶頸，基於 **vLLM** 推論引擎進行實測與優化。透過**結構壓縮（AWQ Quantization）**、**動態排程管理（Chunked Prefill）** 與 **記憶體快取重用（Automatic Prefix Caching）** 策略，全方位降低 VRAM 顯存佔用、提升系統整體吞吐量（System TPS），並顯著削減首字延遲（TTFT）。
 
 ---
 
