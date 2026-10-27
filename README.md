@@ -14,9 +14,9 @@
 
 | 優化維度&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 核心技術 | 關鍵優化數據 | 價值與效益 |
 | :--- | :--- | :--- | :--- |
-| **結構壓縮**<br>(Day 1) | **AWQ 4-bit 量化** | • 模型顯存：6.33 GB → 1.82 GB (-71.2%)<br>• KV Cache 池：5.73 GB → 10.26 GB (+79.1%)<br>• 系統 TPS：279.65 → 330.54 (+18.2%) | 大幅舒緩 GPU 記憶體頻寬限制，在相同顯存預算下釋放更多空間給 PagedAttention 動態分配 KV Cache。 |
-| **動態排程**<br>(Day 2) | **Chunked Prefill** | • 16K ITL：231.45 ms → 224.42 ms (-3.0%)<br>• 16K 總延遲：237.01 s → 229.80 s (-3.0%) | 將長 Prompt 在 Prefill 階段分塊（`max_num_batched_tokens=2048`），避免巨額預填運算阻塞 Decode 步驟。 |
-| **記憶體管理**<br>(Day 3) | **Automatic Prefix Caching (APC)** | • 平均 TTFT：7388.60 ms → 827.25 ms (-88.8%)<br>• P99 TTFT：8560.20 ms → 1804.98 ms (-78.9%)<br>• 快取命中率：0.0% → 76.03% (+76.03%) | 採用 Radix Tree 區塊雜湊重用重複前綴（如 System Prompt / RAG Context），實現首字反應時間降低 8.9 倍。 |
+| **結構壓縮**<br>(Day 1) | **AWQ 4-bit 量化** | • **模型顯存**：6.33 GB → 1.82 GB **(-71.2%)** <br>• **KV Cache 池**：5.73 GB → 10.26 GB **(+79.1%)** <br>• **系統 TPS**：279.65 → 330.54 **(+18.2%)** | 大幅舒緩 GPU 記憶體頻寬限制，在相同顯存預算下釋放更多空間給 PagedAttention 動態分配 KV Cache。 |
+| **動態排程**<br>(Day 2) | **Chunked Prefill** | • **16K ITL**：231.45 ms → 224.42 ms **(-3.0%)** <br>• **16K 總延遲**：237.01 s → 229.80 s **(-3.0%)** | 將長 Prompt 在 Prefill 階段分塊（`max_num_batched_tokens=2048`），避免巨額預填運算阻塞 Decode 步驟。 |
+| **記憶體管理**<br>(Day 3) | **Automatic Prefix Caching (APC)** | • **平均 TTFT**：7388.60 ms → 827.25 ms **(-88.8%)** <br>• **P99 TTFT**：8560.20 ms → 1804.98 ms **(-78.9%)** <br>• **快取命中率**：0.0% → 76.03% **(+76.03%)** | 採用 Radix Tree 區塊雜湊重用重複前綴（如 System Prompt / RAG Context），實現首字反應時間降低 8.9 倍。 |
 
 ---
 
@@ -129,6 +129,7 @@ vllm-inference-optimization/
         ├── day1_awq_runner.py
         ├── day2_chunked_prefill_runner.py
         └── day3_prefix_runner.py
+```
 
 ---
 
