@@ -1,15 +1,17 @@
 model_id: "Qwen/Qwen2.5-3B-Instruct"
 
-# 限制 GPU 顯存上限為 0.65 (T4 GPU 15.2GB 中約預留 9.88 GB)
-gpu_memory_utilization: 0.65
-max_model_len: 14000
-
-# 壓測參數：8 併發 x 12K 長文本 (需求約 3.30 GiB KV Cache)
-concurrency: 8
-prompt_stitching_count: 12
+# 顯存上限設定為安全的 0.58 (提供約 2,500 個 GPU KV Blocks)
+# 確保 LLM 初始化 100% 成功，透過提高併發數 c=[16, 32, 64, 128] 來打爆 GPU KV Cache 天花板
+gpu_memory_utilization: 0.58
+max_model_len: 4096
 max_tokens: 64
 
-# Chunked Prefill 參數
-baseline_chunked: false
-optimization_chunked: true
-max_num_batched_tokens: 2048
+# 大幅提升併發數階梯，強迫系統在 c=64, 128 觸發 CPU KV Cache Offloading
+c_values: [16, 32, 64, 128]
+
+# KV Cache CPU Swap 空間設定 (GB)
+baseline_swap_space: 0     # Baseline: 0GB CPU Swap
+offload_swap_space: 8      # Offload: 8GB CPU Swap 空間
+
+# 嚴格保持權重 Offload 為 0GB
+cpu_offload_gb: 0
