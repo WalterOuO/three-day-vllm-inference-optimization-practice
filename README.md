@@ -10,13 +10,13 @@
 
 ## 📌 Executive Summary & Key Results
 
-在固定硬體資源（16GB VRAM 限制）與 `Qwen2.5-3B-Instruct` 模型基礎上，階段性優化成果如下：
+在固定硬體資源與 `Qwen2.5-3B-Instruct` 模型基礎上，階段性優化成果如下：
 
-| 優化維度 | 核心技術 | 關鍵優化數據 | 業務價值與效益 |
+| 優化維度&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | 核心技術 | 關鍵優化數據 | 價值與效益 |
 | :--- | :--- | :--- | :--- |
-| **結構壓縮** (Day 1) | **AWQ 4-bit 量化** | • **模型顯存 (Weight VRAM)**：`6.33 GB` 📉 **`1.82 GB` (-71.2%)**<br>• **KV Cache 可用空間**：`5.73 GB` 📈 **`10.26 GB` (+79.1%)**<br>• **系統總吞吐量 (TPS)**：`279.65` 🚀 **`330.54` (+18.2%)** | 大幅舒緩 GPU 記憶體頻寬限制，在相同顯存預算下釋放更多空間給 PagedAttention 動態分配 KV Cache。 |
-| **動態排程** (Day 2) | **Chunked Prefill** | • **16K 長文本 ITL**：`231.45 ms` 📉 **`224.42 ms`**<br>• **16K 長文本 Total Latency**：`237.01 s` 📉 **`229.80 s`** | 將長 Prompt 在 Prefill 階段分塊（`max_num_batched_tokens=2048`），避免巨額預填運算阻塞 Decode 步驟。 |
-| **記憶體管理** (Day 3) | **Automatic Prefix Caching (APC)** | • **平均首字延遲 (Avg TTFT)**：`7388.60 ms` 📉 **`827.25 ms` (-88.8%)**<br>• **P99 尾端首字延遲 (P99 TTFT)**：`8560.20 ms` 📉 **`1804.98 ms` (-78.9%)**<br>• **Prefix Cache 命中率**：`0.0%` 📈 **`76.03%`** | 採用 Radix Tree 區塊雜湊重用重複前綴（如 System Prompt / RAG Context），實現首字反應時間暴降 **8.9x**。 |
+| **結構壓縮**<br>(Day 1) | **AWQ 4-bit 量化** | • 模型顯存：6.33 GB → 1.82 GB (-71.2%)<br>• KV Cache 池：5.73 GB → 10.26 GB (+79.1%)<br>• 系統 TPS：279.65 → 330.54 (+18.2%) | 大幅舒緩 GPU 記憶體頻寬限制，在相同顯存預算下釋放更多空間給 PagedAttention 動態分配 KV Cache。 |
+| **動態排程**<br>(Day 2) | **Chunked Prefill** | • 16K ITL：231.45 ms → 224.42 ms (-3.0%)<br>• 16K 總延遲：237.01 s → 229.80 s (-3.0%) | 將長 Prompt 在 Prefill 階段分塊（`max_num_batched_tokens=2048`），避免巨額預填運算阻塞 Decode 步驟。 |
+| **記憶體管理**<br>(Day 3) | **Automatic Prefix Caching (APC)** | • 平均 TTFT：7388.60 ms → 827.25 ms (-88.8%)<br>• P99 TTFT：8560.20 ms → 1804.98 ms (-78.9%)<br>• 快取命中率：0.0% → 76.03% (+76.03%) | 採用 Radix Tree 區塊雜湊重用重複前綴（如 System Prompt / RAG Context），實現首字反應時間降低 8.9 倍。 |
 
 ---
 
@@ -129,3 +129,49 @@ vllm-inference-optimization/
         ├── day1_awq_runner.py
         ├── day2_chunked_prefill_runner.py
         └── day3_prefix_runner.py
+
+---
+
+## 🛠️ Environment & Setup
+
+- **GPU Target**: NVIDIA GPU (e.g., T4 / L4 / A10G / A100)
+- **LLM Engine**: vLLM `v0.6.0+`
+- **Model**: `Qwen/Qwen2.5-3B-Instruct` / `Qwen/Qwen2.5-3B-Instruct-AWQ`
+- **Dependencies**: `torch`, `vllm`, `transformers`, `pandas`, `matplotlib`
+
+### Installation
+
+```bash
+git clone https://github.com/your-username/vllm-inference-optimization.git
+cd vllm-inference-optimization
+pip install -r requirements.txt
+```
+
+---
+
+## 🚀 Reproducing Benchmarks
+
+### Day 1: AWQ 4-bit Quantization
+
+```bash
+python src/experiments/day1_awq_runner.py --mode baseline --config configs/day1_awq.yaml
+python src/experiments/day1_awq_runner.py --mode awq --config configs/day1_awq.yaml
+```
+
+### Day 2: Chunked Prefill
+
+```bash
+python src/experiments/day2_chunked_prefill_runner.py --mode baseline --config configs/day2_chunked_prefill.yaml
+python src/experiments/day2_chunked_prefill_runner.py --mode chunked_prefill --config configs/day2_chunked_prefill.yaml
+```
+
+### Day 3: Automatic Prefix Caching (APC)
+```bash
+python src/experiments/day3_prefix_runner.py --mode baseline --config configs/day3_apc.yaml
+python src/experiments/day3_prefix_runner.py --mode apc --config configs/day3_apc.yaml
+```
+
+---
+
+## Future Work
+- **Phase 5 (In Progress)**: Speculative Decoding（投機解碼）極限加速測試。
