@@ -1,12 +1,46 @@
 {
   "mode": "offload",
-  "enable_chunked_prefill": true,
-  "success": true,
-  "error_msg": "",
-  "elapsed_time_s": 297.46,
-  "throughput_tps": 1.72,
-  "model_vram_gb": 6.33,
-  "gpu_reserved_limit_gb": 9.47,
-  "measured_physical_vram_gb": 9.69,
-  "est_kv_demand_gib": 3.3
+  "swap_space_gb": 8,
+  "results": [
+    {
+      "concurrency": 16,
+      "success": true,
+      "throughput_tps": 86.48,
+      "ttft_s": 11.1877,
+      "itl_s": 0.0102,
+      "gpu_blocks": 0,
+      "cpu_blocks": 0,
+      "pcie_bw_gbps": 0.04
+    },
+    {
+      "concurrency": 32,
+      "success": true,
+      "throughput_tps": 180.7,
+      "ttft_s": 10.6919,
+      "itl_s": 0.01,
+      "gpu_blocks": 0,
+      "cpu_blocks": 0,
+      "pcie_bw_gbps": 0.03
+    },
+    {
+      "concurrency": 64,
+      "success": true,
+      "throughput_tps": 577.86,
+      "ttft_s": 6.688,
+      "itl_s": 0.0063,
+      "gpu_blocks": 0,
+      "cpu_blocks": 0,
+      "pcie_bw_gbps": 0.03
+    },
+    {
+      "concurrency": 128,
+      "success": true,
+      "throughput_tps": 687.56,
+      "ttft_s": 11.2421,
+      "itl_s": 0.0105,
+      "gpu_blocks": 0,
+      "cpu_blocks": 0,
+      "pcie_bw_gbps": 0.03
+    }
+  ]
 }
